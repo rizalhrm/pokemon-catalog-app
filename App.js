@@ -9,6 +9,7 @@ import DetailScreen from './src/screen/DetailScreen';
 import LoginScreen from './src/screen/LoginScreen';
 import RegisterScreen from './src/screen/RegisterScreen';
 import LocationScreen from './src/screen/LocationScreen';
+import AddPokemon from './src/screen/AddPokemon';
 
 import store from './src/public/redux/store';
 
@@ -30,15 +31,17 @@ const getCurrentRoute = (navigationState) => {
 const Routes = {
   TabStack: { key: "TabStack" },
 
-  Home: { key: "Home", title: "Pokemon" },
-  Location : { key: "Location", title: "Location of Pokemon" }
+  Home: { key: "Home", title: "Pokedumb" },
+  Location : { key: "Location", title: "Location of Pokemon" },
+  AddPokemon : { key: "AddPokemon", title: "Add Your Pokemon" }
 }
 
 const AppNavigator = createStackNavigator({
   Home: {
       screen: createBottomTabNavigator({
           [Routes.Home.key]: { screen: HomeScreen },
-          [Routes.Location.key]: { screen: LocationScreen }
+          [Routes.Location.key]: { screen: LocationScreen },
+          [Routes.AddPokemon.key]: { screen: AddPokemon }
       },
       {
           defaultNavigationOptions: ({ navigation }) =>  ({
@@ -51,6 +54,9 @@ const AppNavigator = createStackNavigator({
                   else if (routeName === "Location") {
                     iconName = 'ios-locate';
                   }
+                  else if (routeName === "AddPokemon") {
+                    iconName = 'ios-add-circle';
+                  }
                  
                   return <Ionicons name={iconName} size={25} color={tintColor} />;
               }
@@ -60,7 +66,7 @@ const AppNavigator = createStackNavigator({
               activeTintColor: "#005a9a",
               inactiveTintColor: "#0086cb",
               labelStyle: {
-                  fontSize: 12
+                  fontSize: 14
               }
           },
           navigationOptions: ({navigation}) => {
@@ -103,7 +109,7 @@ const LoginNavigator = createStackNavigator({
       navigationOptions: () => ({
           title: "Register",
           headerStyle: {
-              backgroundColor: '#44b6fd',
+              backgroundColor: '#0086cb',
           },
           headerTintColor: '#fff'
       }),

@@ -16,7 +16,7 @@ export const createPokemon = (body) => {
       type: 'CREATE_POKEMON',
       payload: axios({
         method: 'POST',
-        url: `${server.url}/api/v1/pokemons`,
+        url: `${server.url}/api/v1/pokemon`,
         data: body
       })
     }

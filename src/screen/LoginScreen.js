@@ -28,7 +28,7 @@ class LoginScreen extends React.Component {
                 this.setState({
                   isLoading: true
                 });    
-            this.props.navigation.navigate("HomeDrawer");
+            this.props.navigation.navigate("AddPokemon");
             }, 800);
           })
           .catch(err => {
@@ -54,7 +54,7 @@ class LoginScreen extends React.Component {
             <View style={styles.container}>
               <View behavior="padding" style={styles.container}>
                     <View style={styles.titleContainer}>
-                        <Image style={styles.logo} source={{uri : "https://s3.amazonaws.com/peoplepng/wp-content/uploads/2018/12/18033051/Pokemon-PNG-Pic.png"}} />
+                        <Text style={styles.headtext}>Pokedumb</Text>
                     </View>
                     <View style={styles.keyboard}>
                         <View style={styles.window}>
@@ -143,16 +143,17 @@ const styles = StyleSheet.create({
         height: 100
     },
     headtext: {
-        color: "#fff",
+        color: "#000",
         marginTop: 10,
         width: 160,
         textAlign: "center",
-        fontSize: 25,
-        fontWeight: 'bold'
+        fontSize: 30,
+        fontWeight : '600',
+        fontFamily: 'SharpeBl_PERSONAL'
     },
     font: {
         fontSize: 16,
-        color: '#fff'
+        color: '#000'
     },
     keyboard: {
         margin: 20,
@@ -165,7 +166,13 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         textAlign: "center",
-        color: "#FFF",
+        color: "#fff",
+        fontWeight: "700",
+        fontSize: 16
+    },
+    buttonTextTwo: {
+        textAlign: "center",
+        color: "#000",
         fontWeight: "700",
         fontSize: 16
     },

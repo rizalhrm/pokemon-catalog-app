@@ -56,7 +56,7 @@ class HomeScreen extends React.Component {
                     textContent={''}
                     textStyle={styles.spinnerTextStyle}
             />
-            <View >
+            <View style={{flex: 1 , flexDirection: 'column'}}>
                 <ScrollView>
 
                 <View style={{ flex: 1, flexDirection: "row", marginBottom: 10, marginLeft:10, marginTop: 10 }}>
@@ -75,17 +75,6 @@ class HomeScreen extends React.Component {
                     />
                 </ScrollView>
             </View>
-            <Footer style={{backgroundColor: 'transparent', top: 160}}>
-            <Fab
-            active={'true'}
-            direction="up"
-            containerStyle={{ }}
-            style={{ backgroundColor: '#0086cb' }}
-            position="bottomRight"
-            onPress={() => this.props.navigation.navigate("AddToDoList")}>
-            <Icon name="add" style={{color : '#fff', fontWeight : '800'}}/>
-            </Fab>
-            </Footer>
         </Container>
         )
     }

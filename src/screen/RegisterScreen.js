@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
         alignSelf: "stretch"
     },
     buttonContainer: {
-        backgroundColor: "#c79081",
+        backgroundColor: "#0086cb",
         paddingVertical: 15
     },
     buttonText: {
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
         fontSize: 16
     },
     button: {
-        backgroundColor: "#c79081",
+        backgroundColor: "#0086cb",
         paddingVertical: 15
     },
     buttonDown: {

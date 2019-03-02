@@ -1,41 +1,49 @@
 import React from 'react';
 import {View, Text, StyleSheet, ScrollView, Dimensions} from 'react-native';
 
-import { connect } from 'react-redux';
-import { allPokemon } from '../public/redux/actions/pokemon';
-
-import MapView , { PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView from 'react-native-maps';
 
 const { width, height } = Dimensions.get('window');
 
 class LocationScreen extends React.Component {
 
-    constructor(props) {
-        super(props);
-       
-        this.state = {
+    state = {
+      places: [
+        {
+          id: 1,
+          title: 'Psyduck',
+          description: 'Type: Duck',
+          latitude: -6.288735,
+          longitude: 106.729130,
+        },
+        {
+          id: 2,
+          title: 'Snorlax',
+          description: 'Type: Seed',
+          latitude: -6.300170,
+          longitude: 106.708499,
+        },
+        {
+          id: 3,
+          title: 'Jynx',
+          description: 'Type: Ice',
+          latitude: -6.293692,
+          longitude: 106.695043,
         }
-    }
-
-    componentDidMount() {
-        this.getData();
-    }
-
-    getData = async () => {
-        await this.props.dispatch(allPokemon());
-    }
+      ]
+    };
+  
 
     _mapReady = () => {
-        this.props.pokemons.pokemons[0].mark.showCallout();
+        this.state.places[0].mark.showCallout();
     };
     
 
     render(){
-        const { latitude, longitude } = this.props.pokemons.pokemons[0];
+        const { latitude, longitude } = this.state.places[0];
         return (
             <View style={styles.container}>
             <MapView
-              provider={PROVIDER_GOOGLE}
               ref={map => this.mapView = map}
               initialRegion={{
                 latitude,
@@ -51,11 +59,11 @@ class LocationScreen extends React.Component {
               showBuildings={false}
               onMapReady={this._mapReady}
             >
-              { this.props.pokemons.pokemons.map(place => (
+              { this.state.places.map(place => (
                 <MapView.Marker
                   ref={mark => place.mark = mark}
-                  title={place.name}
-                  description={place.categories.name}
+                  title={place.title}
+                  description={place.description}
                   key={place.id}
                   coordinate={{
                     latitude: place.latitude,
@@ -74,7 +82,7 @@ class LocationScreen extends React.Component {
                   ? e.nativeEvent.contentOffset.x / Dimensions.get('window').width
                   : 0;
     
-                const { latitude, longitude, mark } = this.props.pokemons.pokemons[place];
+                const { latitude, longitude, mark } = this.state.places[place];
     
                 this.mapView.animateToCoordinate({
                   latitude,
@@ -86,10 +94,10 @@ class LocationScreen extends React.Component {
                 }, 500)
               }}
             >
-              { this.props.pokemons.pokemons.map(place => (
+              { this.state.places.map(place => (
                 <View key={place.id} style={styles.place}>
-                  <Text style={styles.title}>{ place.name }</Text>
-                  <Text style={styles.description.name}>{ place.categories.name }</Text>
+                  <Text style={styles.title}>{ place.title }</Text>
+                  <Text style={styles.description}>{ place.description}</Text>
                 </View>
               )) }
             </ScrollView>
@@ -98,13 +106,8 @@ class LocationScreen extends React.Component {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        pokemons: state.pokemons
-    }
-  }
+export default LocationScreen;
 
-export default connect(mapStateToProps)(LocationScreen)
 
 const styles = StyleSheet.create({
     container: {
