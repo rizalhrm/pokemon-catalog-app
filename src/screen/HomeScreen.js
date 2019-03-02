@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, StyleSheet, FlatList, View, TouchableWithoutFeedback, TouchableOpacity, ScrollView } from 'react-native';
-import { Container, Card, Text, Button, Body, Picker} from 'native-base';
+import { Container, Card, Text, Button, Body, Picker, Fab, Footer, Icon} from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { connect } from 'react-redux';
 import { allPokemon } from '../public/redux/actions/pokemon';
@@ -61,8 +61,8 @@ class HomeScreen extends React.Component {
 
                 <View style={{ flex: 1, flexDirection: "row", marginBottom: 10, marginLeft:10, marginTop: 10 }}>
                     <View style={{ width: 10, height: 25, backgroundColor: "#0086cb" }}/>
-                        <Text style={{ fontWeight: "bold", fontSize: 20, marginLeft: 5 }}>
-                                Pokemons List
+                        <Text style={{ fontWeight: "bold", fontSize: 13, marginLeft: 5 }}>
+                                Pokemon List
                         </Text>
                 </View>
                     <FlatList
@@ -75,7 +75,17 @@ class HomeScreen extends React.Component {
                     />
                 </ScrollView>
             </View>
-
+            <Footer style={{backgroundColor: 'transparent', top: 160}}>
+            <Fab
+            active={'true'}
+            direction="up"
+            containerStyle={{ }}
+            style={{ backgroundColor: '#0086cb' }}
+            position="bottomRight"
+            onPress={() => this.props.navigation.navigate("AddToDoList")}>
+            <Icon name="add" style={{color : '#fff', fontWeight : '800'}}/>
+            </Fab>
+            </Footer>
         </Container>
         )
     }
