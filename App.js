@@ -1,11 +1,15 @@
 import React, {Component} from 'react';
-import {View, TouchableOpacity, StyleSheet, AsyncStorage} from 'react-native';
+import {View, TouchableOpacity, AsyncStorage} from 'react-native';
 import {createAppContainer, createStackNavigator, createBottomTabNavigator, createSwitchNavigator} from 'react-navigation';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Provider } from 'react-redux';
 
-import HomeScreen from './src/screen/Home/HomeScreen';
-import DetailPokemon from './src/screen/Home/DetailPokemon';
+import HomeScreen from './src/screen/HomeScreen';
+import DetailScreen from './src/screen/DetailScreen';
+import LoginScreen from './src/screen/LoginScreen';
+import RegisterScreen from './src/screen/RegisterScreen';
+import LocationScreen from './src/screen/LocationScreen';
+
 import store from './src/public/redux/store';
 
 const getCurrentRoute = (navigationState) => {
@@ -26,17 +30,15 @@ const getCurrentRoute = (navigationState) => {
 const Routes = {
   TabStack: { key: "TabStack" },
 
-  Home: { key: "Home", title: "Zona Gadget" }, 
-  AddPokemon: { key: "AddPokemon", title: "Add Pokemon" },
-  Profile: { key: "Profile", title: "My Profile" },
+  Home: { key: "Home", title: "Pokemon" },
+  Location : { key: "Location", title: "Location of Pokemon" }
 }
 
 const AppNavigator = createStackNavigator({
   Home: {
       screen: createBottomTabNavigator({
           [Routes.Home.key]: { screen: HomeScreen },
-          [Routes.AddPokemon.key]: { screen:AddPokemonScreen },
-          [Routes.Profile.key]: { screen: ProfileScreen },
+          [Routes.Location.key]: { screen: LocationScreen }
       },
       {
           defaultNavigationOptions: ({ navigation }) =>  ({
@@ -46,12 +48,10 @@ const AppNavigator = createStackNavigator({
                   if (routeName === "Home") {
                       iconName = 'ios-home';
                   }
-                  else if (routeName === "AddPokemon") {
-                      iconName = 'ios-add-circle-outline';
+                  else if (routeName === "Location") {
+                    iconName = 'ios-locate';
                   }
-                  else if (routeName === "Profile") {
-                      iconName = 'md-people';
-                  }
+                 
                   return <Ionicons name={iconName} size={25} color={tintColor} />;
               }
           }),
@@ -79,8 +79,8 @@ const AppNavigator = createStackNavigator({
   
       })
   },
-  DetailPokemon: {
-      screen: DetailPokemon,
+  DetailScreen: {
+      screen: DetailScreen,
       navigationOptions: ({}) => ({
           title: "Detail Of Pokemon",
           headerStyle: {
@@ -119,15 +119,6 @@ const MainStack = createAppContainer(createSwitchNavigator(
       initialRouteName: 'AppNavigator'
   }
 ))
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-});
 
 export default class Root extends React.Component {
   render() {

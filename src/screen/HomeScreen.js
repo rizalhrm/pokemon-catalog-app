@@ -1,19 +1,16 @@
 import React from 'react';
 import { Image, StyleSheet, FlatList, View, TouchableWithoutFeedback, TouchableOpacity, ScrollView } from 'react-native';
-import { Container, Card, Text, Button, Body} from 'native-base';
+import { Container, Card, Text, Button, Body, Picker} from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { connect } from 'react-redux';
-import { allPokemons } from './public/redux/actions/pokemons';
+import { allPokemon } from '../public/redux/actions/pokemon';
 
 class HomeScreen extends React.Component {
 
     constructor() {
         super();
         this.state = {
-          hasMore: false,
-          search: "",
-          position: 1,
-          interval: null,
+          search: ""
         }
     }
 
@@ -22,46 +19,24 @@ class HomeScreen extends React.Component {
     }
 
     getData = async () => {
-        const get = await this.props.dispatch(allPokemons());
-        if (get) {
-            this.setState({
-                hasMore: this.props.pokemons.hasMore
-            });
-        }
-    }
-
-    loadMoreData = async () => {
-        this.setState({
-          hasMore: false
-        });
-        let url = this.props.pokemons.results.nextPage;
-        const load = await this.props.dispatch(allPokemons(url));
-        if (load) {
-          this.setState({
-            hasMore: this.props.pokemons.hasMore
-          });
-        }
-      };
-
-    handleNavigateDetail (item) {
-        this.props.dispatch(savePokemDetail(item))
-        this.props.navigation.navigate('DetailPokemon')
+        await this.props.dispatch(allPokemon());
     }
 
     _keyExtractor = (item, index) => item.id.toString();
 
     renderItem = ({ item, index }) => (
-        <TouchableWithoutFeedback onPress={()=> this.handleNavigateDetail(item.id)}>
+        <TouchableWithoutFeedback onPress={()=> this.props.navigation.navigate('DetailScreen', {item})}>
 
         <Card style={{marginRight: 8, marginLeft:8 , marginBottom: 8 ,borderRadius: 8, width: 190, height: 280}}>
-            <Image source={{uri: item.image_url}} style={styles.image_url}/>
+            <Image source={{uri: item.image_url}} style={styles.image}/>
             <Body style={{paddingLeft: 10, paddingTop: 10}}>
-              <Text numberOfLines={1} style={{color: '#212121', fontSize: 15, paddingBottom: 5}}>{item.type_id.name}</Text>
+              <Text style={{color: 'black', fontWeight: 'bold', fontSize: 15, paddingBottom: 3}}>{item.name}</Text>
+              <Text style={{color: '#212121', fontSize: 13, paddingBottom: 3}}>Type: {item.types.name}</Text>
               
-              <Text style={{ fontSize: 14, color : 'black', marginBottom:2}}>{item.category_id.name}</Text>
+              <Text style={{ fontSize: 13, color: '#212121'}}>Category: {item.categories.name}</Text>
     
               <View style={{flexDirection:'row', flexWrap:'wrap', paddingTop: 10}}>
-                <Button style={{height: 30, backgroundColor: '#0086cb'}} primary onPress={()=> this.handleNavigateDetail(item.id)}>
+                <Button style={{height: 30, backgroundColor: '#0086cb'}} primary onPress={()=> this.props.navigation.navigate('DetailScreen', {item})}>
                     <Text>View</Text>
                 </Button>
 
@@ -73,18 +48,6 @@ class HomeScreen extends React.Component {
     )
     
     render(){
-
-        const isCloseToBottom = ({
-            layoutMeasurement,
-            contentOffset,
-            contentSize
-          }) => {
-            const paddingToBottom = 20;
-            return (
-              layoutMeasurement.height + contentOffset.y >=
-              contentSize.height - paddingToBottom
-            );
-          };
       
         return (
         <Container>
@@ -94,29 +57,22 @@ class HomeScreen extends React.Component {
                     textStyle={styles.spinnerTextStyle}
             />
             <View >
-                <ScrollView
-                    onScroll={({ nativeEvent }) => {
-                    if (isCloseToBottom(nativeEvent) && this.state.hasMore) {
-                        this.loadMoreData();
-                    }
-                    }}
-                    scrollEventThrottle={16}
-                >
+                <ScrollView>
 
-                <View style={{ flex: 1, flexDirection: "row", marginBottom: 10, marginLeft:10, marginTop: -10 }}>
+                <View style={{ flex: 1, flexDirection: "row", marginBottom: 10, marginLeft:10, marginTop: 10 }}>
                     <View style={{ width: 10, height: 25, backgroundColor: "#0086cb" }}/>
                         <Text style={{ fontWeight: "bold", fontSize: 20, marginLeft: 5 }}>
                                 Pokemons List
                         </Text>
                 </View>
-                        <FlatList
-                            data={this.props.pokemons}
-                            renderItem={this.renderItem}
-                            keyExtractor={this._keyExtractor}
-                            refreshing={this.props.pokemons.isLoading}
-                            horizontal={false}
-                            numColumns={2}
-                        />
+                    <FlatList
+                        data={this.props.pokemons.pokemons}
+                        renderItem={this.renderItem}
+                        keyExtractor={this._keyExtractor}
+                        refreshing={this.props.pokemons.isLoading}
+                        horizontal={false}
+                        numColumns={2}
+                    />
                 </ScrollView>
             </View>
 

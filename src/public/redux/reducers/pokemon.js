@@ -8,7 +8,7 @@ const initialState = {
     lastid: 0
   }
   
-  export default note = (state = initialState, action) => {
+  export default pokemons = (state = initialState, action) => {
     switch (action.type) {
   
       case 'ALL_POKEMONS_PENDING':

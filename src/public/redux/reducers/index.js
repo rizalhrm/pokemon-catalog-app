@@ -2,12 +2,12 @@ import { combineReducers } from 'redux';
 
 import auth from './auth'
 import user from './user'
-import pokemon from './pokemon'
+import pokemons from './pokemon'
 
 const appReducer = combineReducers({
 	auth,
 	user,
-	pokemon
+	pokemons
 });
   
 export default appReducer;
