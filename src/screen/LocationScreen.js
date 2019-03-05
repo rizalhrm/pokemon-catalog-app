@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, StyleSheet, ScrollView, Dimensions} from 'react-native';
 
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 
 const { width, height } = Dimensions.get('window');
 
@@ -20,15 +20,15 @@ class LocationScreen extends React.Component {
           id: 2,
           title: 'Snorlax',
           description: 'Type: Seed',
-          latitude: -6.300170,
-          longitude: 106.708499,
+          latitude: -6.290259,
+          longitude: 106.732382,
         },
         {
           id: 3,
           title: 'Jynx',
           description: 'Type: Ice',
-          latitude: -6.293692,
-          longitude: 106.695043,
+          latitude: -6.292403,
+          longitude: 106.729056,
         }
       ]
     };
@@ -40,6 +40,7 @@ class LocationScreen extends React.Component {
     
 
     render(){
+        console.disableYellowBox = true;
         const { latitude, longitude } = this.state.places[0];
         return (
             <View style={styles.container}>
@@ -52,11 +53,11 @@ class LocationScreen extends React.Component {
                 longitudeDelta: 0.0231,
               }}
               style={styles.mapView}
-              rotateEnabled={false}
-              scrollEnabled={false}
-              zoomEnabled={false}
-              showsPointsOfInterest={false}
-              showBuildings={false}
+              rotateEnabled={true}
+              scrollEnabled={true}
+              zoomEnabled={true}
+              showsPointsOfInterest={true}
+              showBuildings={true}
               onMapReady={this._mapReady}
             >
               { this.state.places.map(place => (
@@ -72,35 +73,6 @@ class LocationScreen extends React.Component {
                 />
               ))}
             </MapView>
-            <ScrollView
-              style={styles.placesContainer}
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              onMomentumScrollEnd={(e) => {
-                const place = (e.nativeEvent.contentOffset.x > 0)
-                  ? e.nativeEvent.contentOffset.x / Dimensions.get('window').width
-                  : 0;
-    
-                const { latitude, longitude, mark } = this.state.places[place];
-    
-                this.mapView.animateToCoordinate({
-                  latitude,
-                  longitude
-                }, 500);
-    
-                setTimeout(() => {
-                  mark.showCallout();
-                }, 500)
-              }}
-            >
-              { this.state.places.map(place => (
-                <View key={place.id} style={styles.place}>
-                  <Text style={styles.title}>{ place.title }</Text>
-                  <Text style={styles.description}>{ place.description}</Text>
-                </View>
-              )) }
-            </ScrollView>
           </View>    
         )
     }

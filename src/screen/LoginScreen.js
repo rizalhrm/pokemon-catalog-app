@@ -28,7 +28,7 @@ class LoginScreen extends React.Component {
                 this.setState({
                   isLoading: true
                 });    
-            this.props.navigation.navigate("AddPokemon");
+            this.props.navigation.navigate("Home");
             }, 800);
           })
           .catch(err => {
