@@ -57,11 +57,11 @@ class HomeScreen extends React.Component {
                 horizontal={false}
                 numColumns={2}
             />
-            <View>
+            <View style={{position : 'relative', top : 20}}>
                 <Fab
                     style={{ backgroundColor: '#0086cb' }}
                     position="bottomRight"
-                    onPress={this.addPokemon}>
+                    onPress={() => this.props.navigation.navigate("AddPokemon")}>
                     <Ionicons name='ios-add'/>
                 </Fab>
             </View>

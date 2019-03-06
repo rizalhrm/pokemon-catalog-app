@@ -10,7 +10,7 @@ import LoginScreen from './src/screen/LoginScreen';
 import RegisterScreen from './src/screen/RegisterScreen';
 import LocationScreen from './src/screen/LocationScreen';
 import AddPokemon from './src/screen/AddPokemon';
-
+import ProfileScreen from './src/screen/ProfileScreen';
 import store from './src/public/redux/store';
 
 const getCurrentRoute = (navigationState) => {
@@ -33,7 +33,7 @@ const Routes = {
 
   Home: { key: "Home", title: "Pokedumb" },
   Location : { key: "Location", title: "Location of Pokemon" },
-  AddPokemon : { key: "AddPokemon", title: "Add Your Pokemon" }
+  Profile : { key: "Profile", title: "My Profile" }
 }
 
 const AppNavigator = createStackNavigator({
@@ -41,7 +41,7 @@ const AppNavigator = createStackNavigator({
       screen: createBottomTabNavigator({
           [Routes.Home.key]: { screen: HomeScreen },
           [Routes.Location.key]: { screen: LocationScreen },
-          [Routes.AddPokemon.key]: { screen: AddPokemon }
+          [Routes.Profile.key]: { screen: ProfileScreen }
       },
       {
           defaultNavigationOptions: ({ navigation }) =>  ({
@@ -56,6 +56,9 @@ const AppNavigator = createStackNavigator({
                   }
                   else if (routeName === "AddPokemon") {
                     iconName = 'ios-add-circle';
+                  }
+                  else if (routeName === "Profile") {
+                    iconName = 'ios-people';
                   }
                  
                   return <Ionicons name={iconName} size={25} color={tintColor} />;
@@ -95,6 +98,16 @@ const AppNavigator = createStackNavigator({
           headerTintColor: '#fff'
     })
   },
+  AddPokemon: {
+    screen: AddPokemon,
+    navigationOptions: ({}) => ({
+        title: "Add Your Pokemon",
+        headerStyle: {
+            backgroundColor: '#0086cb',
+        },
+        headerTintColor: '#fff'
+  })
+},
 })
 
 const LoginNavigator = createStackNavigator({

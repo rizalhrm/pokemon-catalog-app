@@ -2,11 +2,33 @@ const initialState = {
 	data: [],
 	access_token: [],
 	isLoading: false,
-	isAuth: false
+	isAuth: false,
+	isLogin: false
 };
 
 export default auth = (state = initialState, action) => {
 	switch (action.type) {
+		case 'GET_STATUS_PENDING': 
+      return {
+        ...state,
+        isLoading: true,
+        isAuth: false
+      }
+  
+    case 'GET_STATUS_REJECTED':
+      return {
+        ...state,
+        isLoading: false,
+        isAuth: false
+      }
+  
+    case 'GET_STATUS_FULFILLED':
+      return {
+        ...state,
+        isLoading: false,
+        isAuth: true
+      }
+
 		case "GET_PROFILE_PENDING":
 			return Object.assign({}, state, {
 				isLoading: true

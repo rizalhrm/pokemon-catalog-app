@@ -21,7 +21,7 @@ class LoginScreen extends React.Component {
         this.doLogin()
           .then(res => {
             const auth = this.props.auth;
-            AsyncStorage.setItem("id", auth.data.id);
+            AsyncStorage.setItem("email", this.state.email);
             AsyncStorage.setItem("token", auth.access_token.token);
             AsyncStorage.setItem("refreshToken", auth.access_token.refreshToken);
             setTimeout(() => {

@@ -1,6 +1,7 @@
 import React from 'react';
-import {View, StyleSheet, Alert, AsyncStorage} from 'react-native';
+import {View, StyleSheet, Clipboard, TouchableOpacity, Image} from 'react-native';
 import { Card, CardItem, Body, Button, Text, Container, Content, Item, Input, Label, Picker, Right, Left, Thumbnail } from 'native-base';
+import ImagePicker from 'react-native-image-picker';
 import { connect } from 'react-redux';
 import { createPokemon } from '../public/redux/actions/pokemon';
 import { allCategory } from '../public/redux/actions/category';
@@ -11,7 +12,6 @@ class AddPokemon extends React.Component {
 
     constructor(){
         super();
-        this.checkAuth();
         this.state = {
             categories : null,
             chosenCategories : '0',
@@ -20,7 +20,8 @@ class AddPokemon extends React.Component {
             name : "",
             latitude : "",
             longitude : "",
-            image : ""
+            avatarSource: null,
+            pic:null
         }
         this.arrayCategories = () => {
             let items = [<Picker.Item key='0' label='--Categories--' value='0'/>];
@@ -33,14 +34,15 @@ class AddPokemon extends React.Component {
         }
     }
 
-    checkAuth = async () => {
-        const token = await AsyncStorage.getItem("token");
-        setTimeout(() => {
-          this.props.navigation.navigate(token ? "AddPokemon" : "Login");
-        });
+    Async = async () => {
+        const token = await AsyncStorage.getItem('token');
+        this.props.navigation.navigate(token ? null : 'Login');
     };
-    
+
     componentDidMount() {
+        setTimeout(() => {
+            this.Async();
+        }, 800);
         this.getData();
         this.getType();
     }
@@ -60,8 +62,8 @@ class AddPokemon extends React.Component {
             const self = this;
 
             setTimeout(() => {
-                const { name, latitude, longitude, image} = self.state;
-                if(name != "" && latitude != "" && longitude != "" && image != ""){
+                const { name, latitude, longitude} = self.state;
+                if(name != ""){
                     self.setState({isValid: true});
                 }
                 else{
@@ -73,18 +75,32 @@ class AddPokemon extends React.Component {
 
     handleSave = async () => {
         let name = this.state.name;
-        this.props.dispatch(createPokemon({name: name, image_url : this.state.image ,type_id : this.state.chosenTypes, category_id : this.state.chosenCategories, latitude: this.state.latitude, longitude: this.state.longitude}))
+        this.props.dispatch(createPokemon({name: name, image_url : this.state.avatarSource ,type_id : this.state.chosenTypes, category_id : this.state.chosenCategories, latitude: this.state.latitude, longitude: this.state.longitude}))
         .then( res => {
-            Alert.alert(
-                'Success!',
-                'Your pokemon was successfully added',
-                [
-                  {text: 'OK', onPress: () => this.props.navigation.navigate("Home") },
-                ],
-                {cancelable: false},
-              )
+            this.props.navigation.navigate("Home");
         })
     }
+
+    useLibraryHandler = async () => {
+        const options = {};
+        ImagePicker.launchImageLibrary(options, (response) => {
+            console.log('Response = ', response);
+    
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            }
+            else if (response.error) {
+                console.log('Image Picker Error: ', response.error);
+            }
+    
+            else {
+                this.setState({
+                    avatarSource: response.uri,
+                    pic:response.data
+                });
+            }
+            }); 
+    };
 
     selectType  = async ( item ) => {
         let RNchecked = []
@@ -119,15 +135,6 @@ class AddPokemon extends React.Component {
                             <Label>Name of Pokemon</Label>
                             <Input onChangeText={(text) =>  {
                                 this.setState({name: text})
-                                this.validation();
-                            }}/>
-                        </Item>
-                    </CardItem>
-                    <CardItem>
-                        <Item floatingLabel>
-                            <Label>Image URL</Label>
-                            <Input onChangeText={(text) => {
-                                this.setState({image: text})
                                 this.validation();
                             }}/>
                         </Item>
@@ -174,6 +181,16 @@ class AddPokemon extends React.Component {
                                 onChecked={(item) => this.selectType(item)}
                             />
                     </CardItem>
+                    <CardItem>
+                        <Button style={{height: 30, backgroundColor: '#0086cb'}} primary onPress={this.useLibraryHandler}>
+                            <Text>Select Image</Text>
+                        </Button>
+                    </CardItem>
+                    {this.state.avatarSource ? (
+                    <CardItem>
+                        <Thumbnail square style={{alignItems: 'center'}} source={{uri : this.state.avatarSource}} />
+                    </CardItem>
+                     ) : null}
                   </Card>
                 </View>
                 <View>
@@ -182,7 +199,8 @@ class AddPokemon extends React.Component {
                             <Left/>
                             <Body>
                                 {
-                                    isValid && this.state.chosenCategories != '0' && this.state.chosenTypes != '0' ?
+                                    isValid && this.state.chosenCategories != '0' && this.state.chosenTypes != '0' && this.state.avatarSource != null
+                                    ?
                                     (
                                         <Button style={{width: 100, alignItems: 'center', backgroundColor: '#0086cb'}} full onPress={this.handleSave}>
                                         <Text style={{color: '#fff', textAlign: 'center'}}>SAVE</Text>
@@ -207,7 +225,6 @@ class AddPokemon extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-        auth : state.auth,
         pokemons : state.pokemons,
         categories : state.categories,
         type : state.type

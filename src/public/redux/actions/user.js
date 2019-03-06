@@ -3,7 +3,7 @@ import { server } from '../../../server'
 
 export const getFullProfile = (user_id, token) => {
 	return {
-	  type: "GET_FULL_PRORILE",
+	  type: "GET_FULL_PROFILE",
 	  payload: axios({
 		method: "get",
 		url: `${server.url}/api/v1/user/${user_id}`,
