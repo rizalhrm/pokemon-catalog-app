@@ -2,6 +2,7 @@ import React from 'react';
 import { Image, StyleSheet, FlatList, View, TouchableWithoutFeedback, TouchableOpacity, ScrollView } from 'react-native';
 import { Container, Card, Text, Button, Body, Picker, Fab, Footer, Icon} from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
 import { allPokemon } from '../public/redux/actions/pokemon';
 
@@ -27,20 +28,12 @@ class HomeScreen extends React.Component {
     renderItem = ({ item, index }) => (
         <TouchableWithoutFeedback onPress={()=> this.props.navigation.navigate('DetailScreen', {item})}>
 
-        <Card style={{marginRight: 8, marginLeft:8 , marginBottom: 8 ,borderRadius: 8, width: 190, height: 280}}>
+        <Card style={{marginRight: 8, marginLeft:8 , marginBottom: 8 ,borderRadius: 8, width: 190, height: 250}}>
             <Image source={{uri: item.image_url}} style={styles.image}/>
             <Body style={{paddingLeft: 10, paddingTop: 10}}>
               <Text style={{color: 'black', fontWeight: 'bold', fontSize: 15, paddingBottom: 3}}>{item.name}</Text>
               <Text style={{color: '#212121', fontSize: 13, paddingBottom: 3}}>Type: {item.types.name}</Text>
-              
               <Text style={{ fontSize: 13, color: '#212121'}}>Category: {item.categories.name}</Text>
-    
-              <View style={{flexDirection:'row', flexWrap:'wrap', paddingTop: 10}}>
-                <Button style={{height: 30, backgroundColor: '#0086cb'}} primary onPress={()=> this.props.navigation.navigate('DetailScreen', {item})}>
-                    <Text>View</Text>
-                </Button>
-
-              </View>
             </Body>
         </Card>
 
@@ -50,32 +43,29 @@ class HomeScreen extends React.Component {
     render(){
       
         return (
-        <Container>
+        <View>
             <Spinner
                     visible={this.props.pokemons.isLoading}
                     textContent={''}
                     textStyle={styles.spinnerTextStyle}
             />
-            <View style={{flex: 1 , flexDirection: 'column'}}>
-                <ScrollView>
-
-                <View style={{ flex: 1, flexDirection: "row", marginBottom: 10, marginLeft:10, marginTop: 10 }}>
-                    <View style={{ width: 10, height: 25, backgroundColor: "#0086cb" }}/>
-                        <Text style={{ fontWeight: "bold", fontSize: 13, marginLeft: 5 }}>
-                                Pokemon List
-                        </Text>
-                </View>
-                    <FlatList
-                        data={this.props.pokemons.pokemons}
-                        renderItem={this.renderItem}
-                        keyExtractor={this._keyExtractor}
-                        refreshing={this.props.pokemons.isLoading}
-                        horizontal={false}
-                        numColumns={2}
-                    />
-                </ScrollView>
+            <FlatList
+                data={this.props.pokemons.pokemons}
+                renderItem={this.renderItem}
+                keyExtractor={this._keyExtractor}
+                refreshing={this.props.pokemons.isLoading}
+                horizontal={false}
+                numColumns={2}
+            />
+            <View>
+                <Fab
+                    style={{ backgroundColor: '#0086cb' }}
+                    position="bottomRight"
+                    onPress={this.addPokemon}>
+                    <Ionicons name='ios-add'/>
+                </Fab>
             </View>
-        </Container>
+        </View>
         )
     }
 }

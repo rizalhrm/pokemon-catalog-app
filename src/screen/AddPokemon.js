@@ -1,26 +1,27 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
-import { Card, CardItem, Body, Button, Text, Container, Content, Item, Input, Label, Picker, Right, Left } from 'native-base';
+import {View, StyleSheet, Clipboard, TouchableOpacity, Image} from 'react-native';
+import { Card, CardItem, Body, Button, Text, Container, Content, Item, Input, Label, Picker, Right, Left, Thumbnail } from 'native-base';
+import ImagePicker from 'react-native-image-picker';
 import { connect } from 'react-redux';
 import { createPokemon } from '../public/redux/actions/pokemon';
 import { allCategory } from '../public/redux/actions/category';
 import { allType } from '../public/redux/actions/type';
+import CheckboxFormX from 'react-native-checkbox-form';
 
 class AddPokemon extends React.Component {
 
     constructor(){
         super();
         this.state = {
-            categories : [],
+            categories : null,
             chosenCategories : '0',
             indexCategories : '',
-            types : [],
             chosenTypes : '0',
-            indexTypes : '',
             name : "",
-            image_url : "",
             latitude : "",
-            longitude : ""
+            longitude : "",
+            avatarSource: null,
+            pic:null
         }
         this.arrayCategories = () => {
             let items = [<Picker.Item key='0' label='--Categories--' value='0'/>];
@@ -30,15 +31,6 @@ class AddPokemon extends React.Component {
                 );
             })
             return items
-        }
-        this.arrayTypes = () => {
-            let itemss = [<Picker.Item key='0' label='--Types--' value='0'/>];
-            this.props.type.type.forEach((item) => {
-                itemss.push(
-                    <Picker.Item key={item.id} label={item.name} value={item.id}/>
-                );
-            })
-            return itemss
         }
     }
 
@@ -70,8 +62,8 @@ class AddPokemon extends React.Component {
             const self = this;
 
             setTimeout(() => {
-                const { name, latitude, longitude, image_url} = self.state;
-                if(name != "" && latitude != "" && longitude != "" && image_url){
+                const { name, latitude, longitude} = self.state;
+                if(name != "" && latitude != "" && longitude != ""){
                     self.setState({isValid: true});
                 }
                 else{
@@ -83,7 +75,7 @@ class AddPokemon extends React.Component {
 
     handleSave = async () => {
         let name = this.state.name;
-        this.props.dispatch(createPokemon({name: name, image_url: this.state.image_url, type_id : this.state.chosenTypes, category_id : this.state.chosenCategories, latitude: this.state.latitude, longitude: this.state.longitude}))
+        this.props.dispatch(createPokemon({name: name, type_id : this.state.chosenTypes, category_id : this.state.chosenCategories, latitude: this.state.latitude, longitude: this.state.longitude}))
         .then( res => {
             this.props.navigation.navigate("Home");
         })
@@ -92,10 +84,51 @@ class AddPokemon extends React.Component {
         })
     }
 
+    useLibraryHandler = async () => {
+        const options = {};
+        ImagePicker.launchImageLibrary(options, (response) => {
+            console.log('Response = ', response);
+    
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            }
+            else if (response.error) {
+                console.log('Image Picker Error: ', response.error);
+            }
+    
+            else {
+                let source = { uri: response.uri };
+                this.setState({
+                    avatarSource: source,
+                    pic:response.data
+                });
+            }
+            }); 
+    };
+
+    selectType  = async ( item ) => {
+        let RNchecked = []
+        let IDchecked = []
+        item.forEach((element) => {
+            RNchecked.push(element.RNchecked)
+            IDchecked.push(element.id)
+        });
+        for (let i = 0; i < RNchecked.length; i++) {
+            if (RNchecked[i] == true) {
+                this.setState({
+                    chosenTypes: IDchecked[i]
+                });
+            }
+        }
+    };
 
     render(){
         console.disableYellowBox = true;
         const { isValid } = this.state;
+        let types = [];   
+        this.props.type.type.forEach((item) => {
+            types.push(item)
+        })
         return (
         <Container>
             <Content padder>
@@ -106,15 +139,6 @@ class AddPokemon extends React.Component {
                             <Label>Name of Pokemon</Label>
                             <Input onChangeText={(text) =>  {
                                 this.setState({name: text})
-                                this.validation();
-                            }}/>
-                        </Item>
-                    </CardItem>
-                    <CardItem>
-                        <Item floatingLabel>
-                            <Label>Image Url</Label>
-                            <Input onChangeText={(text) =>  {
-                                this.setState({image_url: text})
                                 this.validation();
                             }}/>
                         </Item>
@@ -149,16 +173,28 @@ class AddPokemon extends React.Component {
                         </Item>
                     </CardItem>
                     <CardItem>
-                        <Item picker>
                             <Text>Type :</Text>
-                            <Picker
-                                selectedValue={this.state.chosenTypes}
-                                onValueChange={(itemValue, itemIndex)=>(this.setState({chosenTypes: itemValue, indexTypes: itemIndex}))}
-                            >
-                            {this.arrayTypes()}
-                            </Picker>
-                        </Item>
+                            <CheckboxFormX
+                                style={{ width: 350 - 30, color: 'black' }}
+                                dataSource={types}
+                                itemShowKey='name'
+                                itemCheckedKey="RNchecked"
+                                iconSize={16}
+                                formHorizontal={true}
+                                labelHorizontal={false}
+                                onChecked={(item) => this.selectType(item)}
+                            />
                     </CardItem>
+                    <CardItem>
+                        <Button style={{height: 30, backgroundColor: '#0086cb'}} primary onPress={this.useLibraryHandler}>
+                            <Text>Select Image</Text>
+                        </Button>
+                    </CardItem>
+                    {this.state.avatarSource ? (
+                    <CardItem>
+                        <Thumbnail square style={{alignItems: 'center'}} source={this.state.avatarSource} />
+                    </CardItem>
+                     ) : null}
                   </Card>
                 </View>
                 <View>
@@ -167,15 +203,16 @@ class AddPokemon extends React.Component {
                             <Left/>
                             <Body>
                                 {
-                                    isValid && this.state.chosenCategories != '0' && this.state.chosenTypes != '0' ?
+                                    isValid && this.state.chosenCategories != '0' && this.state.chosenTypes != '0' && this.state.avatarSource != null
+                                    ?
                                     (
                                         <Button style={{width: 100, alignItems: 'center', backgroundColor: '#0086cb'}} full onPress={this.handleSave}>
-                                        <Text style={{color: '#fff', textAlign: 'center'}}>PAY NOW</Text>
+                                        <Text style={{color: '#fff', textAlign: 'center'}}>SAVE</Text>
                                         </Button>
                                     ):
                                     (
                                         <Button style={{width: 100, alignItems: 'center'}} full disabled>
-                                        <Text style={{color: '#fff', textAlign: 'center'}}>PAY NOW</Text>
+                                        <Text style={{color: '#fff', textAlign: 'center'}}>SAVE</Text>
                                         </Button>
                                     )
                                 }

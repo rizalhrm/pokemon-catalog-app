@@ -1,0 +1,33 @@
+import CheckboxFormX from 'react-native-checkbox-form';
+
+selectType  = async ( item ) => {
+        let RNchecked = []
+        let IDchecked = 0
+        await item.forEach((element) => {
+            RNchecked.push(element.RNchecked)
+            IDchecked.push(element.id)
+            if (RNchecked == "true") {
+                this.setState({
+                    chosenTypes: IDchecked
+                });
+            }
+        });
+        console.log(this.state.chosenTypes)
+    };
+
+    let types = [];   
+        this.props.type.type.forEach((item) => {
+            types.push(item)
+        })
+
+
+<CheckboxFormX
+                                style={{ width: 350 - 30, color: 'black' }}
+                                dataSource={types}
+                                itemShowKey='name'
+                                itemCheckedKey="RNchecked"
+                                iconSize={16}
+                                formHorizontal={true}
+                                labelHorizontal={false}
+                                onChecked={(item) => this.selectType(item)}
+                            />
