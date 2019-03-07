@@ -42,7 +42,7 @@ class DetailScreen extends React.Component {
                     </Text>
                     <Button
                     icon={<MaterialIcons name='location-on' style={{color: 'white', fontSize: 20}}/>}
-                    buttonStyle={{borderRadius: 6, marginLeft: 0, marginRight: 0, marginBottom: 0, backgroundColor:'#0086cb'}}
+                    buttonStyle={{borderRadius: 6, marginLeft: 0, marginRight: 0, marginBottom: 0, backgroundColor:'#344453'}}
                     title='Location'/>
                 </View>
                 </Card>

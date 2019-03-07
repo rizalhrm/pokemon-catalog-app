@@ -1,14 +1,14 @@
 import { combineReducers } from 'redux';
 
 import auth from './auth'
-import user from './user'
+import profile from './profile'
 import pokemons from './pokemon'
 import categories from './category'
 import type from './type'
 
 const appReducer = combineReducers({
 	auth,
-	user,
+	profile,
 	pokemons,
 	categories,
 	type

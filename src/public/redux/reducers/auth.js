@@ -1,3 +1,5 @@
+import { AsyncStorage } from "react-native";
+
 const initialState = {
 	data: [],
 	access_token: [],
@@ -47,23 +49,29 @@ export default auth = (state = initialState, action) => {
 				isAuth: true
 			});
 	
-		case "LOGIN_PENDING":
-			return Object.assign({}, state, {
-				isLoading: true
-			});
-	
-		case "LOGIN_REJECTED":
-			return Object.assign({}, state, {
-				isLoading: false,
-				isAuth: false
-			});
-	
-		case "LOGIN_FULFILLED":
-			return Object.assign({}, state, {
-				access_token: action.payload.data.access_token,
-				isLoading: false,
-				isAuth: true
-			});
+			case "LOGIN_PENDING":
+      return Object.assign({}, state, {
+        isLoading: true
+      });
+
+    case "LOGIN_REJECTED":
+      return Object.assign({}, state, {
+        isLoading: false,
+        isAuth: false
+      });
+
+    case "LOGIN_FULFILLED":
+      AsyncStorage.setItem("token", action.payload.data.access_token.token);
+      AsyncStorage.setItem(
+        "refreshToken",
+        action.payload.data.access_token.refreshToken
+      );
+      return Object.assign({}, state, {
+        access_token: action.payload.data.access_token,
+        isLoading: false,
+        isAuth: true
+      });
+
 	
 		case "REFRESH_TOKEN_PENDING":
 			return Object.assign({}, state, {

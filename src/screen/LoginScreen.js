@@ -32,8 +32,11 @@ class LoginScreen extends React.Component {
             }, 800);
           })
           .catch(err => {
-            console.log(err);
-            Alert.alert("Warning", "Login Failed !");
+            if (err.response != undefined) {
+				alert(err.response.data.msg)
+			} else {
+				alert(err)
+			}
             this.setState({
                 isLoading: false
             });      
@@ -161,7 +164,7 @@ const styles = StyleSheet.create({
         alignSelf: "stretch"
     },
     buttonContainer: {
-        backgroundColor: "#0086cb",
+        backgroundColor: "#344453",
         paddingVertical: 15
     },
     buttonText: {
@@ -177,7 +180,7 @@ const styles = StyleSheet.create({
         fontSize: 16
     },
     button: {
-        backgroundColor: "#0086cb",
+        backgroundColor: "#344453",
         paddingVertical: 15
     },
     buttonDown: {

@@ -35,7 +35,7 @@ export const updatePokemon = (value) => {
 
 export const deletePokemon = (value) => {
     return {
-      type: 'DELETE_NOTE',
+      type: 'DELETE_POKEMON',
       payload: axios({
         method: 'DELETE',
         url: `${server.url}/api/v1/pokemon/${value.id}`

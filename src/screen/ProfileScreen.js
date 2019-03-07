@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import {
   View,
-  Text,
   Image,
   StyleSheet,
   TouchableOpacity,
@@ -9,7 +8,8 @@ import {
   Modal,
   TextInput,
   ScrollView,
-  AsyncStorage
+  AsyncStorage,
+  ImageBackground
 } from "react-native";
 import {
   Container,
@@ -20,14 +20,15 @@ import {
   Right,
   Form,
   Label,
-  Picker
+  Picker,
+  Text
 } from "native-base";
 
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { connect } from "react-redux";
 
 import { logout } from "../public/redux/actions/auth";
-import { getFullProfile, updateProfile } from "../public/redux/actions/user";
+import { getFullProfile, updateProfile } from "../public/redux/actions/profile";
 
 
 class ProfileScreen extends Component {
@@ -46,9 +47,9 @@ class ProfileScreen extends Component {
         this.getProfile()
         .then(res => {
             this.setState({
-              name: this.props.user.data.name,
-              about: this.props.user.data.about,
-              gender: this.props.user.data.gender,
+              name: this.props.profile.data.name,
+              about: this.props.profile.data.about,
+              gender: this.props.profile.data.gender,
             });
         })
         .catch(err => {
@@ -69,38 +70,35 @@ class ProfileScreen extends Component {
   saveProfile = () => {
         const token = this.props.auth.access_token.token;
         let body = {
-        user_id: this.props.auth.data.id,
-        name: this.state.name,
-        about: this.state.about,
-        gender: this.state.gender
+          user_id: this.props.auth.data.id,
+          name: this.state.name,
+          about: this.state.about,
+          gender: this.state.gender
         };
         this.props.dispatch(updateProfile(body, token));
         this.setModalVisible(!this.state.modalVisible);
   };
+
+
   handleLogout = () => {
     Alert.alert("Alert", "Are you sure to log out ?", [
         { text: "No" },
         {
             text: "Yes",
             style: "cancel",
-            onPress: () => {
-                this.doLogout()
-                    .then(res => {
-                        AsyncStorage.removeItem("token");
-                        AsyncStorage.removeItem("refreshToken");
-                        this.props.navigation.navigate("Home");
-                    })
-                    .catch(err => {
-                        console.log("error" + err);
-                    });
+            onPress: async () => {
+                    this.doLogout()
+                    await AsyncStorage.removeItem("token");
+                    await AsyncStorage.removeItem("refreshToken");
+                    this.props.navigation.navigate("Splash");
             }
         }
     ]);
 };
 
-doLogout = async () => {
+doLogout = () => {
     const token = this.props.auth.access_token.token;
-    await this.props.dispatch(logout(token));
+    this.props.dispatch(logout(token));
 };
 
 checkAuth = async () => {
@@ -111,46 +109,35 @@ checkAuth = async () => {
   };
 
   render() {
+    console.log(this.props.profile.data)
     return (
-      <Container style={styles.container}>
-        <View style={styles.viewImg}>
-          <Image
-            source={{uri: 'https://secure.gravatar.com/avatar/c9490c639969cbcac686c3e66feb4648?s=800&d=identicon'}}
-            style={styles.image}
-          />
-          </View>
-          
-          <View style={styles.viewName}>
-          {this.props.user.data ? (
-            <Text style={styles.headerText} numberOfLines={1}>
-             {this.props.user.data.name}
-            </Text>
-          ) : (
-            <Text style={styles.headerText}> {this.props.user.data.name}</Text>
-          )}
-          {this.props.user.data ? (
-            <Text style={styles.bioText}>
-              "{this.props.user.data.about}"
-            </Text>
-          ) : (
-            <Text style={styles.bioText}> "{this.props.user.data.about}"</Text>
-          )}
-            <TouchableOpacity
-                style={styles.editBtn}
+        <View style={styles.container}>
+            <View style={styles.header}>
+            <ImageBackground source={{uri : "https://images.alphacoders.com/434/434003.jpg"}} style={{width: '100%', height: '100%'}}>
+            </ImageBackground>
+            </View>
+            <Image style={styles.avatar} source={{uri: 'https://secure.gravatar.com/avatar/c9490c639969cbcac686c3e66feb4648?s=800&d=identicon'}}/>
+            <View style={styles.body}>
+                <View style={styles.bodyContent}>
+                <Text style={styles.name}>N: {this.props.profile.data.name}</Text>
+                <Text style={styles.email}>E: {this.props.auth.data.email}</Text>
+                <Text style={styles.description}>A: {this.props.profile.data.about}</Text>
+                
+                <Button style={styles.buttonContainer}
                 onPress={() => {
-                this.setModalVisible(true);
-                }} 
-            >
-                <Text style={styles.editText}>Edit My Profile</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                    onPress={() => this.handleLogout()}
-                    style={styles.buttonLogout}
-                    >
-                <Text style={styles.textButton}>Logout</Text>
-            </TouchableOpacity> 
-        </View>
-        <Modal
+                  this.setModalVisible(true);
+                  }} 
+                >
+                    <Text>Edit Profile</Text>  
+                </Button>              
+                <Button style={[styles.buttonContainer, styles.buttonLogout]}
+                onPress={() => this.handleLogout()}
+                >
+                    <Text>Log Out</Text> 
+                </Button>
+                </View>
+            </View>
+            <Modal
           animationType="slide"
           transparent={false}
           visible={this.state.modalVisible}
@@ -248,8 +235,8 @@ checkAuth = async () => {
               </View>
             </View>
           </ScrollView>
-        </Modal>
-      </Container>
+          </Modal>
+        </View>
     );
   }
 }
@@ -257,70 +244,72 @@ checkAuth = async () => {
 const mapStateToProps = state => {
     return {
         auth: state.auth,
-        user: state.user
+        profile: state.profile
     };
 };
 
 export default connect(mapStateToProps)(ProfileScreen);
 
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: "#fff"
+    header:{
+      height: 150,
     },
-    viewImg: {
-        left: 170,
-        top: 70,
-        backgroundColor: "#fff"
+    avatar: {
+        width: 130,
+        height: 130,
+        borderRadius: 30,
+        borderWidth: 5,
+        borderColor: "white",
+        marginBottom:10,
+        alignSelf:'center',
+        position: 'absolute',
+        marginTop:80
     },
-    viewName: {
-        left: 20,
-        bottom: 20
+    name:{
+        fontSize:22,
+        color:"#fff",
+        fontWeight:'bold',
     },
-    editBtn: {
-        bottom: 5,
-        left: 3
+    body:{
+        marginTop:30,
     },
-    buttonLogout:{
-        width: 100,
-        height: 50,
-        borderWidth: 1,
-        borderColor: '#00a699',
-        justifyContent: 'center',
+    bodyContent: {
+        flex: 1,
         alignItems: 'center',
-        borderRadius: 5,
-        top: 10,
-        left: 220,
-        
+        padding:30,
     },
-    textButton: {
-        fontFamily: 'AirbnbCereal-Medium',
-        color: '#00a699',
+    name:{
+        fontSize:28,
+        color: "black",
+        fontWeight: "bold"
     },
-    editText: {
-        color: "#424242",
-        fontFamily: 'AirbnbCereal-Light',
+    email:{
+        fontSize:16,
+        color: "grey",
+        marginTop:10
     },
-    image: {
-        width: 80,
-        height: 80,
-        borderRadius: 50,
-        left: 80
+    description:{
+        fontSize:16,
+        color: "black",
+        marginTop:10,
+        textAlign: 'center'
     },
-    headerText: {
-        fontFamily: 'AirbnbCereal-Bold',
-        marginTop: 10,
-        fontSize: 22,
-        color: "#424242"
+    buttonContainer: {
+        marginTop:10,
+        height:45,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignSelf: 'center',
+        marginBottom:20,
+        width:250,
+        borderRadius:10,
+        backgroundColor: "#344453",
     },
-    bioText: {
-        fontFamily: 'AirbnbCereal-Medium',
-        marginTop: 10,
-        fontSize: 16,
-        color: "#424242",
-        marginBottom: 20
+    buttonLogout: {
+        marginTop : -8
     },
     headerModal: {
-        backgroundColor: "#0086cb"
+        backgroundColor: "#344453"
     },
     saveModal: {
         color: "#fff",

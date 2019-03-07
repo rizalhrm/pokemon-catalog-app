@@ -7,7 +7,7 @@ import {
   View
 } from "react-native";
 import { connect } from 'react-redux'
-import { addUser } from '../public/redux/actions/user'
+import { addUser } from '../public/redux/actions/profile'
 
 class RegisterScreen extends Component {
 
@@ -18,15 +18,15 @@ class RegisterScreen extends Component {
 		repassword: ''
 	}
 
-    async handleRegister(user) {
+    async handleRegister(profile) {
 		try {
-			if (user.email == '' || user.username == '' || user.password == '' || user.repassword == '') {
+			if (profile.email == '' || profile.username == '' || profile.password == '' || profile.repassword == '') {
 				throw 'Field must not be empty'
 			}
-			if (user.password != user.repassword){
+			if (profile.password != profile.repassword){
 				throw 'Password doesnt match'
 			}
-			await this.props.dispatch(addUser(user))
+			await this.props.dispatch(addUser(profile))
 			this.props.navigation.navigate('Login')
 		} catch(e) {
 			if (e.response != undefined) {
@@ -127,7 +127,7 @@ class RegisterScreen extends Component {
 const mapStateToProps = (state) => {
 	return {
 		auth: state.auth,
-		user: state.user
+		profile: state.profile
 	}
 }
 
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
         alignSelf: "stretch"
     },
     buttonContainer: {
-        backgroundColor: "#0086cb",
+        backgroundColor: "#344453",
         paddingVertical: 15
     },
     buttonText: {
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
         fontSize: 16
     },
     button: {
-        backgroundColor: "#0086cb",
+        backgroundColor: "#344453",
         paddingVertical: 15
     },
     buttonDown: {

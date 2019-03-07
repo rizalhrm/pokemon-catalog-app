@@ -2,28 +2,34 @@ import React from 'react';
 import {View, StyleSheet, Alert, AsyncStorage} from 'react-native';
 import { Card, CardItem, Body, Button, Text, Container, Content, Item, Input, Label, Picker, Right, Left, Thumbnail } from 'native-base';
 import { connect } from 'react-redux';
-import { createPokemon } from '../public/redux/actions/pokemon';
+import { updatePokemon } from '../public/redux/actions/pokemon';
 import { allCategory } from '../public/redux/actions/category';
 import { allType } from '../public/redux/actions/type';
-import CheckboxFormX from 'react-native-checkbox-form';
 
-class AddPokemon extends React.Component {
+class UpdatePokemon extends React.Component {
 
-    constructor(){
-        super();
-        this.checkAuth();
+    constructor(props){
+        super(props);
+        let id = props.navigation.state.params.item.id;
+        let name = props.navigation.state.params.item.name;
+        let latitude = props.navigation.state.params.item.latitude;
+        let longitude = props.navigation.state.params.item.longitude;
+        let image = props.navigation.state.params.item.image_url;
+        let type_id = props.navigation.state.params.item.type_id;
+        let category_id = props.navigation.state.params.item.category_id;
         this.state = {
-            categories : null,
-            chosenCategories : '0',
+            chosenCategories : category_id,
             indexCategories : '',
-            chosenTypes : '0',
-            name : "",
-            latitude : "",
-            longitude : "",
-            image : ""
+            chosenTypes : type_id,
+            indexTypes : '',
+            name : name,
+            id : id,
+            latitude : latitude,
+            longitude : longitude,
+            image : image
         }
         this.arrayCategories = () => {
-            let items = [<Picker.Item key='0' label='--Categories--' value='0'/>];
+            let items = [];
             this.props.categories.categories.forEach((item) => {
                 items.push(
                     <Picker.Item key={item.id} label={item.name} value={item.id}/>
@@ -31,18 +37,21 @@ class AddPokemon extends React.Component {
             })
             return items
         }
+        this.arrayTypes = () => {
+            let items = [];
+            this.props.type.type.forEach((item) => {
+                items.push(
+                    <Picker.Item key={item.id} label={item.name} value={item.id}/>
+                );
+            })
+            return items
+        }
     }
-
-    checkAuth = async () => {
-        const token = await AsyncStorage.getItem("token");
-        setTimeout(() => {
-          this.props.navigation.navigate(token ? "AddPokemon" : "Login");
-        });
-    };
     
     componentDidMount() {
         this.getData();
         this.getType();
+        this.validation();
     }
 
     getData = async () => {
@@ -71,44 +80,24 @@ class AddPokemon extends React.Component {
         })
     }
 
-    handleSave = async () => {
+    handleUpdate = async () => {
+        let id = this.state.id;
         let name = this.state.name;
-        this.props.dispatch(createPokemon({name: name, image_url : this.state.image ,type_id : this.state.chosenTypes, category_id : this.state.chosenCategories, latitude: this.state.latitude, longitude: this.state.longitude}))
+        let image = this.state.image;
+        let latitude = this.state.latitude;
+        let longitude = this.state.longitude;
+        this.props.dispatch(updatePokemon({id: id, name: name, image_url : image ,type_id : this.state.chosenTypes, category_id : this.state.chosenCategories, latitude: latitude, longitude: longitude}))
         .then( res => {
-            Alert.alert(
-                'Success!',
-                'Your pokemon was successfully added',
-                [
-                  {text: 'OK', onPress: () => this.props.navigation.navigate("AddPokemon") },
-                ],
-                {cancelable: false},
-              )
+            this.props.navigation.navigate("ListPokemon");
+        })
+        .catch( err => {
+            alert('message : ' + err)
         })
     }
-
-    selectType  = async ( item ) => {
-        let RNchecked = []
-        let IDchecked = []
-        item.forEach((element) => {
-            RNchecked.push(element.RNchecked)
-            IDchecked.push(element.id)
-        });
-        for (let i = 0; i < RNchecked.length; i++) {
-            if (RNchecked[i] == true) {
-                this.setState({
-                    chosenTypes: IDchecked[i]
-                });
-            }
-        }
-    };
 
     render(){
         console.disableYellowBox = true;
         const { isValid } = this.state;
-        let types = [];   
-        this.props.type.type.forEach((item) => {
-            types.push(item)
-        })
         return (
         <Container>
             <Content padder>
@@ -117,7 +106,9 @@ class AddPokemon extends React.Component {
                     <CardItem>
                         <Item floatingLabel>
                             <Label>Name of Pokemon</Label>
-                            <Input onChangeText={(text) =>  {
+                            <Input 
+                            value={this.state.name}
+                            onChangeText={(text) =>  {
                                 this.setState({name: text})
                                 this.validation();
                             }}/>
@@ -126,7 +117,9 @@ class AddPokemon extends React.Component {
                     <CardItem>
                         <Item floatingLabel>
                             <Label>Image URL</Label>
-                            <Input onChangeText={(text) => {
+                            <Input
+                            value={this.state.image}
+                            onChangeText={(text) => {
                                 this.setState({image: text})
                                 this.validation();
                             }}/>
@@ -135,7 +128,9 @@ class AddPokemon extends React.Component {
                     <CardItem>
                         <Item floatingLabel>
                             <Label>Latitude</Label>
-                            <Input onChangeText={(text) => {
+                            <Input
+                            value={this.state.latitude}
+                            onChangeText={(text) => {
                                 this.setState({latitude: text})
                                 this.validation();
                             }}/>
@@ -144,7 +139,9 @@ class AddPokemon extends React.Component {
                     <CardItem>
                         <Item floatingLabel>
                             <Label>Longitude</Label>
-                            <Input onChangeText={(text) => {
+                            <Input
+                            value={this.state.longitude}
+                            onChangeText={(text) => {
                                 this.setState({longitude: text})
                                 this.validation();
                             }}/>
@@ -162,17 +159,15 @@ class AddPokemon extends React.Component {
                         </Item>
                     </CardItem>
                     <CardItem>
+                        <Item picker>
                             <Text>Type :</Text>
-                            <CheckboxFormX
-                                style={{ width: 350 - 30, color: 'black' }}
-                                dataSource={types}
-                                itemShowKey='name'
-                                itemCheckedKey="RNchecked"
-                                iconSize={16}
-                                formHorizontal={true}
-                                labelHorizontal={false}
-                                onChecked={(item) => this.selectType(item)}
-                            />
+                            <Picker
+                                selectedValue={this.state.chosenTypes}
+                                onValueChange={(itemValue, itemIndex)=>(this.setState({chosenTypes: itemValue, indexTypes: itemIndex}))}
+                            >
+                            {this.arrayTypes()}
+                            </Picker>
+                        </Item>
                     </CardItem>
                   </Card>
                 </View>
@@ -182,15 +177,15 @@ class AddPokemon extends React.Component {
                             <Left/>
                             <Body>
                                 {
-                                    isValid && this.state.chosenCategories != '0' && this.state.chosenTypes != '0' ?
+                                    isValid ?
                                     (
-                                        <Button style={{width: 100, alignItems: 'center', backgroundColor: '#344453'}} full onPress={this.handleSave}>
-                                        <Text style={{color: '#fff', textAlign: 'center'}}>SAVE</Text>
+                                        <Button style={{width: 100, alignItems: 'center', backgroundColor: '#344453'}} full onPress={this.handleUpdate}>
+                                        <Text style={{color: '#fff', textAlign: 'center'}}>UPDATE</Text>
                                         </Button>
                                     ):
                                     (
                                         <Button style={{width: 100, alignItems: 'center'}} full disabled>
-                                        <Text style={{color: '#fff', textAlign: 'center'}}>SAVE</Text>
+                                        <Text style={{color: '#fff', textAlign: 'center'}}>UPDATE</Text>
                                         </Button>
                                     )
                                 }
@@ -214,7 +209,7 @@ const mapStateToProps = (state) => {
     }
   }
 
-export default connect(mapStateToProps)(AddPokemon)
+export default connect(mapStateToProps)(UpdatePokemon)
 
 const styles = StyleSheet.create({
     spinnerTextStyle: {

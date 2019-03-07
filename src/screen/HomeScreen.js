@@ -1,9 +1,10 @@
 import React from 'react';
-import { Image, StyleSheet, FlatList, View, TouchableWithoutFeedback, TouchableOpacity, ScrollView } from 'react-native';
+import { Image, StyleSheet, FlatList, View, TouchableWithoutFeedback, TouchableOpacity, ScrollView, AsyncStorage } from 'react-native';
 import { Container, Card, Text, Button, Body, Picker, Fab, Footer, Icon} from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
+import { newToken, getProfile } from '../public/redux/actions/auth';
 import { allPokemon } from '../public/redux/actions/pokemon';
 
 class HomeScreen extends React.Component {
@@ -17,8 +18,35 @@ class HomeScreen extends React.Component {
 
     componentDidMount() {
         this.getData();
+        this.refreshToken()
+            .then(res => {
+                const auth = this.props.auth;
+                AsyncStorage.setItem("token", auth.access_token.token);
+                AsyncStorage.setItem("refreshToken", auth.access_token.refreshToken);
+                this.getProfile()
+                .then(res => {
+                })
+                .catch(err => {
+                    console.log("error" + err);
+                });
+            })
+            .catch(err => {
+                console.log("error" + err);
+            });
+
     }
 
+    refreshToken = async () => {
+        const refresh_token = await AsyncStorage.getItem("refreshToken");
+        const email = await AsyncStorage.getItem("email");
+        await this.props.dispatch(newToken(email, refresh_token));
+    };
+
+    getProfile = async () => {
+        const token = await AsyncStorage.getItem("token");
+        await this.props.dispatch(getProfile(token));
+    };
+    
     getData = async () => {
         await this.props.dispatch(allPokemon());
     }
@@ -59,7 +87,7 @@ class HomeScreen extends React.Component {
             />
             <View style={{position : 'relative', top : 20}}>
                 <Fab
-                    style={{ backgroundColor: '#0086cb' }}
+                    style={{ backgroundColor: '#344453' }}
                     position="bottomRight"
                     onPress={() => this.props.navigation.navigate("AddPokemon")}>
                     <Ionicons name='ios-add'/>

@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {View, TouchableOpacity, AsyncStorage} from 'react-native';
+import {View, TouchableOpacity, AsyncStorage, StyleSheet} from 'react-native';
 import {createAppContainer, createStackNavigator, createBottomTabNavigator, createSwitchNavigator} from 'react-navigation';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Entypo from 'react-native-vector-icons/Entypo';
 import { Provider } from 'react-redux';
 
 import HomeScreen from './src/screen/HomeScreen';
@@ -10,7 +11,10 @@ import LoginScreen from './src/screen/LoginScreen';
 import RegisterScreen from './src/screen/RegisterScreen';
 import LocationScreen from './src/screen/LocationScreen';
 import AddPokemon from './src/screen/AddPokemon';
+import UpdatePokemon from './src/screen/UpdatePokemon';
+import ListPokemon from './src/screen/ListPokemon';
 import ProfileScreen from './src/screen/ProfileScreen';
+import Splash from './src/screen/Splash';
 import store from './src/public/redux/store';
 
 const getCurrentRoute = (navigationState) => {
@@ -66,8 +70,8 @@ const AppNavigator = createStackNavigator({
           }),
           initialRouteName: Routes.Home.key,
           tabBarOptions: {
-              activeTintColor: "#005a9a",
-              inactiveTintColor: "#0086cb",
+              activeTintColor: "#344453",
+              inactiveTintColor: "#5f6f7f",
               labelStyle: {
                   fontSize: 14
               }
@@ -80,7 +84,7 @@ const AppNavigator = createStackNavigator({
               return { 
                   title, 
                   headerStyle: {
-                      backgroundColor: '#0086cb'
+                      backgroundColor: '#344453'
                   },
                   headerTintColor: '#fff'
               }
@@ -93,21 +97,59 @@ const AppNavigator = createStackNavigator({
       navigationOptions: ({}) => ({
           title: "Detail Of Pokemon",
           headerStyle: {
-              backgroundColor: '#0086cb',
+              backgroundColor: '#344453',
           },
           headerTintColor: '#fff'
     })
   },
   AddPokemon: {
     screen: AddPokemon,
-    navigationOptions: ({}) => ({
+    navigationOptions: ({navigation}) => ({
         title: "Add Your Pokemon",
         headerStyle: {
-            backgroundColor: '#0086cb',
+            backgroundColor: '#344453',
         },
+        headerRight : (
+        <View style={{padding: 5}}>
+          <TouchableOpacity onPress={() => navigation.navigate('ListPokemon')}>
+              <Entypo style={styles.myicon} size={25} name='list'/>
+          </TouchableOpacity>
+        </View>),
         headerTintColor: '#fff'
-  })
-},
+    })
+  },
+  ListPokemon: {
+    screen: ListPokemon,
+    navigationOptions: ({navigation}) => ({
+        title: "Pokemons List",
+        headerStyle: {
+            backgroundColor: '#344453',
+        },
+        headerRight : (
+        <View style={{padding: 5}}>
+          <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+              <Ionicons style={styles.myicon} size={25} name='ios-home'/>
+          </TouchableOpacity>
+        </View>),
+        headerTintColor: '#fff'
+    })
+  },
+  UpdatePokemon: {
+    screen: UpdatePokemon,
+    navigationOptions: ({navigation}) => ({
+        title: "Update Your Pokemon",
+        headerStyle: {
+            backgroundColor: '#344453',
+        },
+        headerRight : (
+        <View style={{padding: 5}}>
+          <TouchableOpacity onPress={() => navigation.navigate('UpdatePokemon')}>
+              <Ionicons style={styles.myicon} size={25} name='ios-home'/>
+          </TouchableOpacity>
+        </View>),
+        headerTintColor: '#fff'
+    })
+  }
 })
 
 const LoginNavigator = createStackNavigator({
@@ -122,7 +164,7 @@ const LoginNavigator = createStackNavigator({
       navigationOptions: () => ({
           title: "Register",
           headerStyle: {
-              backgroundColor: '#0086cb',
+              backgroundColor: '#344453',
           },
           headerTintColor: '#fff'
       }),
@@ -132,12 +174,23 @@ const LoginNavigator = createStackNavigator({
 const MainStack = createAppContainer(createSwitchNavigator(
   {
       LoginNavigator: LoginNavigator,
-      AppNavigator : AppNavigator
+      AppNavigator : AppNavigator,
+      Splash : Splash
   },
   {
-      initialRouteName: 'AppNavigator'
+      initialRouteName: 'Splash'
   }
 ))
+
+const styles = StyleSheet.create({
+  myicon : {
+      color: 'white',
+      marginRight: 10,
+      alignItems: 'center',
+      alignContent: 'center',
+      alignSelf: 'center'
+  }
+})
 
 export default class Root extends React.Component {
   render() {

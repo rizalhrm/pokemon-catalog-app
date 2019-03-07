@@ -5,7 +5,7 @@ export const getProfile = token => {
   return {
     type: "GET_PROFILE",
     payload: axios({
-      method: "post",
+      method: "get",
       url: `${server.url}/api/v1/profile`,
       headers: {
         Authorization: `Bearer ${token}`

@@ -5,7 +5,7 @@ const initialState = {
 	isLogin: false
 }
 
-export default user = (state = initialState, action) => {
+export default profile = (state = initialState, action) => {
 	switch(action.type) {
 		
 	case "GET_FULL_PROFILE_PENDING":
