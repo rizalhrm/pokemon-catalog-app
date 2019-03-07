@@ -1,126 +1,82 @@
 import React from 'react';
-import {View, Text, StyleSheet, ScrollView, Dimensions} from 'react-native';
+import {View, Text, StyleSheet, Dimensions} from 'react-native';
 
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Polygon,Overlay } from 'react-native-maps';
+import {connect} from 'react-redux'
 
 const { width, height } = Dimensions.get('window');
 
 class LocationScreen extends React.Component {
 
-    state = {
-      places: [
-        {
-          id: 1,
-          title: 'Psyduck',
-          description: 'Type: Duck',
-          latitude: -6.288735,
-          longitude: 106.729130,
-        },
-        {
-          id: 2,
-          title: 'Snorlax',
-          description: 'Type: Seed',
-          latitude: -6.290259,
-          longitude: 106.732382,
-        },
-        {
-          id: 3,
-          title: 'Jynx',
-          description: 'Type: Ice',
-          latitude: -6.292403,
-          longitude: 106.729056,
-        }
-      ]
-    };
-  
-
-    _mapReady = () => {
-        this.state.places[0].mark.showCallout();
-    };
-    
+    add= (int,adds=0)=>{
+      return parseFloat(int)+adds
+    }
+    sub=(int,subs=0)=>{
+      return parseFloat(int)-subs
+    }
 
     render(){
-        console.disableYellowBox = true;
-        const { latitude, longitude } = this.state.places[0];
         return (
             <View style={styles.container}>
             <MapView
-              ref={map => this.mapView = map}
+              style={styles.container}
               initialRegion={{
-                latitude,
-                longitude,
-                latitudeDelta: 0.0142,
-                longitudeDelta: 0.0231,
-              }}
-              style={styles.mapView}
-              rotateEnabled={true}
-              scrollEnabled={true}
-              zoomEnabled={true}
-              showsPointsOfInterest={true}
-              showBuildings={true}
-              onMapReady={this._mapReady}
-            >
-              { this.state.places.map(place => (
-                <MapView.Marker
-                  ref={mark => place.mark = mark}
-                  title={place.title}
-                  description={place.description}
-                  key={place.id}
-                  coordinate={{
-                    latitude: place.latitude,
-                    longitude: place.longitude,
-                  }}
-                />
-              ))}
+                latitude: -6.287573,
+                longitude: 106.729023,
+                latitudeDelta: 0.02,
+                longitudeDelta: 0.02
+              }}>
+              {this.props.pokemons.pokemons.map((item,index) =>{
+              return(
+                <Overlay
+                  key={item.id.toString()}
+                  image={item.image_url}
+                  bounds={
+                    [[this.sub(item.latitude),this.add(item.longitude)], 
+                    [this.sub(item.latitude,0.0033000), this.add(item.longitude,0.0033000)]]
+                    }
+                  />)
+                })
+              }
+              {this.props.pokemons.pokemons.map((item,index) =>{
+              return(
+                <Polygon
+                key={item.id.toString()}
+                coordinates={
+                  [
+                    {latitude:this.sub(item.latitude),longitude:this.add(item.longitude)},
+                    {latitude:this.sub(item.latitude),longitude:this.add(item.longitude,0.0033000)},
+                    {latitude:this.sub(item.latitude,0.0033000),longitude:this.add(item.longitude,0.0033000)},
+                    {latitude:this.sub(item.latitude,0.0033000),longitude:this.add(item.longitude)},
+                  ]
+                }
+                fillColor='rgba(0,0,0,0)'
+                strokeColor='rgba(0,0,0,0)'
+                strokeWidth={0}
+                tappable={true}
+                onPress={()=>this.props.navigation.navigate('DetailScreen',{
+                  item
+                })}
+                />)
+                })
+              }
             </MapView>
           </View>    
         )
     }
 }
 
-export default LocationScreen;
+mapStateToProps=(state)=>{
+  return{
+    pokemons: state.pokemons
+  }
+}
+
+export default connect(mapStateToProps)(LocationScreen);
 
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      justifyContent: 'flex-end',
-      alignItems: 'flex-end'
-    },
-  
-    mapView: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      bottom: 0,
-      right: 0,
-    },
-  
-    placesContainer: {
-      width: '100%',
-      maxHeight: 200,
-    },
-  
-    place: {
-      width: width - 40,
-      maxHeight: 200,
-      backgroundColor: '#FFF',
-      marginHorizontal: 20,
-      borderTopLeftRadius: 10,
-      borderTopRightRadius: 10,
-      padding: 20,
-    },
-  
-    title: {
-      fontWeight: 'bold',
-      fontSize: 18,
-      backgroundColor: 'transparent',
-    },
-  
-    description: {
-      color: '#999',
-      fontSize: 12,
-      marginTop: 5,
-    },
-  });
-  
+      flex: 1
+    }
+});  

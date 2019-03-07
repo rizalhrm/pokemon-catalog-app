@@ -14,12 +14,16 @@ class DetailScreen extends React.Component {
         let image = props.navigation.state.params.item.image_url;
         let type = props.navigation.state.params.item.types.name;
         let category = props.navigation.state.params.item.categories.name;
+        let latitude = props.navigation.state.params.item.latitude;
+        let longitude = props.navigation.state.params.item.longitude;
         this.state = {
             name: name,
             id : id,
             image : image,
             type : type,
-            category : category
+            category : category,
+            latitude : latitude,
+            longitude : longitude
         }
     }
 
@@ -41,6 +45,7 @@ class DetailScreen extends React.Component {
                     Category : {this.state.category}
                     </Text>
                     <Button
+                    onPress={()=>this.props.navigation.navigate('DetailLocation',{data : this.state})}
                     icon={<MaterialIcons name='location-on' style={{color: 'white', fontSize: 20}}/>}
                     buttonStyle={{borderRadius: 6, marginLeft: 0, marginRight: 0, marginBottom: 0, backgroundColor:'#344453'}}
                     title='Location'/>

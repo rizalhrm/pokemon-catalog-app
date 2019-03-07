@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 
 import HomeScreen from './src/screen/HomeScreen';
 import DetailScreen from './src/screen/DetailScreen';
+import DetailLocation from './src/screen/DetailLocation';
 import LoginScreen from './src/screen/LoginScreen';
 import RegisterScreen from './src/screen/RegisterScreen';
 import LocationScreen from './src/screen/LocationScreen';
@@ -143,7 +144,23 @@ const AppNavigator = createStackNavigator({
         },
         headerRight : (
         <View style={{padding: 5}}>
-          <TouchableOpacity onPress={() => navigation.navigate('UpdatePokemon')}>
+          <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+              <Ionicons style={styles.myicon} size={25} name='ios-home'/>
+          </TouchableOpacity>
+        </View>),
+        headerTintColor: '#fff'
+    })
+  },
+  DetailLocation: {
+    screen: DetailLocation,
+    navigationOptions: ({navigation}) => ({
+        title: "Detail Location",
+        headerStyle: {
+            backgroundColor: '#344453',
+        },
+        headerRight : (
+        <View style={{padding: 5}}>
+          <TouchableOpacity onPress={() => navigation.navigate('Home')}>
               <Ionicons style={styles.myicon} size={25} name='ios-home'/>
           </TouchableOpacity>
         </View>),
