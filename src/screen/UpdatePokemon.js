@@ -88,7 +88,14 @@ class UpdatePokemon extends React.Component {
         let longitude = this.state.longitude;
         this.props.dispatch(updatePokemon({id: id, name: name, image_url : image ,type_id : this.state.chosenTypes, category_id : this.state.chosenCategories, latitude: latitude, longitude: longitude}))
         .then( res => {
-            this.props.navigation.navigate("ListPokemon");
+            Alert.alert(
+                'Success!',
+                'Your pokemon has been updated successfully',
+                [
+                  {text: 'OK', onPress: () => this.props.navigation.navigate("ListPokemon")},
+                ],
+                {cancelable: false},
+              )
         })
         .catch( err => {
             alert('message : ' + err)
@@ -171,30 +178,20 @@ class UpdatePokemon extends React.Component {
                     </CardItem>
                   </Card>
                 </View>
-                <View>
-                    <Card>
-                        <CardItem style={{alignContent: 'center'}}>
-                            <Left/>
-                            <Body>
-                                {
-                                    isValid ?
-                                    (
-                                        <Button style={{width: 100, alignItems: 'center', backgroundColor: '#344453'}} full onPress={this.handleUpdate}>
-                                        <Text style={{color: '#fff', textAlign: 'center'}}>UPDATE</Text>
-                                        </Button>
-                                    ):
-                                    (
-                                        <Button style={{width: 100, alignItems: 'center'}} full disabled>
-                                        <Text style={{color: '#fff', textAlign: 'center'}}>UPDATE</Text>
-                                        </Button>
-                                    )
-                                }
-                            </Body>
-                            <Right/>
-                        </CardItem>
-                        </Card>
-                    </View>
             </Content>
+            {
+                isValid ?
+                (
+                    <Button style={{alignItems: 'center', backgroundColor: '#344453'}} full onPress={this.handleUpdate}>
+                    <Text style={{color: '#fff', textAlign: 'center'}}>UPDATE</Text>
+                    </Button>
+                ):
+                (
+                    <Button style={{alignItems: 'center'}} full disabled>
+                    <Text style={{color: '#fff', textAlign: 'center'}}>UPDATE</Text>
+                    </Button>
+                )
+            }
         </Container>
         )
     }

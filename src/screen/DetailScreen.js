@@ -3,7 +3,6 @@ import {View, Text, StyleSheet} from 'react-native';
 import {Container, Icon, Content} from 'native-base';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Card, Image, Button } from 'react-native-elements';
-import { connect } from 'react-redux';
 
 class DetailScreen extends React.Component {
 
@@ -57,15 +56,7 @@ class DetailScreen extends React.Component {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-      products: state.productDetails,
-      carts: state.carts,
-      checkCart: state.checkCart
-    }
-  }
-
-export default connect(mapStateToProps)(DetailScreen)
+export default DetailScreen;
 
 const styles = StyleSheet.create({
     spinnerTextStyle: {

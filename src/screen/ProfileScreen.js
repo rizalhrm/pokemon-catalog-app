@@ -119,9 +119,9 @@ checkAuth = async () => {
             <Image style={styles.avatar} source={{uri: 'https://secure.gravatar.com/avatar/c9490c639969cbcac686c3e66feb4648?s=800&d=identicon'}}/>
             <View style={styles.body}>
                 <View style={styles.bodyContent}>
-                <Text style={styles.name}>N: {this.props.profile.data.name}</Text>
-                <Text style={styles.email}>E: {this.props.auth.data.email}</Text>
-                <Text style={styles.description}>A: {this.props.profile.data.about}</Text>
+                <Text style={styles.name}>Rizal</Text>
+                <Text style={styles.email}>rizal@gmail.com</Text>
+                <Text style={styles.description}>Web &amp; Mobile App Programmer</Text>
                 
                 <Button style={styles.buttonContainer}
                 onPress={() => {

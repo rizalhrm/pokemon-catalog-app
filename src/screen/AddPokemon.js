@@ -79,10 +79,13 @@ class AddPokemon extends React.Component {
                 'Success!',
                 'Your pokemon was successfully added',
                 [
-                  {text: 'OK', onPress: () => this.props.navigation.navigate("AddPokemon") },
+                  {text: 'OK', onPress: () => this.props.navigation.navigate("Home") },
                 ],
                 {cancelable: false},
               )
+        })
+        .catch( err => {
+            alert('message : ' + err)
         })
     }
 
@@ -176,30 +179,20 @@ class AddPokemon extends React.Component {
                     </CardItem>
                   </Card>
                 </View>
-                <View>
-                    <Card>
-                        <CardItem style={{alignContent: 'center'}}>
-                            <Left/>
-                            <Body>
-                                {
-                                    isValid && this.state.chosenCategories != '0' && this.state.chosenTypes != '0' ?
-                                    (
-                                        <Button style={{width: 100, alignItems: 'center', backgroundColor: '#344453'}} full onPress={this.handleSave}>
-                                        <Text style={{color: '#fff', textAlign: 'center'}}>SAVE</Text>
-                                        </Button>
-                                    ):
-                                    (
-                                        <Button style={{width: 100, alignItems: 'center'}} full disabled>
-                                        <Text style={{color: '#fff', textAlign: 'center'}}>SAVE</Text>
-                                        </Button>
-                                    )
-                                }
-                            </Body>
-                            <Right/>
-                        </CardItem>
-                        </Card>
-                    </View>
             </Content>
+            {
+                isValid && this.state.chosenCategories != '0' && this.state.chosenTypes != '0' ?
+                (
+                    <Button style={{alignItems: 'center', backgroundColor: '#344453'}} full onPress={this.handleSave}>
+                    <Text style={{color: '#fff', textAlign: 'center'}}>SAVE</Text>
+                    </Button>
+                ):
+                (
+                    <Button style={{alignItems: 'center'}} full disabled>
+                    <Text style={{color: '#fff', textAlign: 'center'}}>SAVE</Text>
+                    </Button>
+                )
+            }
         </Container>
         )
     }

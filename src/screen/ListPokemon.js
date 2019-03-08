@@ -50,8 +50,8 @@ class ListPokemon extends React.Component {
                 </Left>
                 <Body>
                     <Text>{item.name}</Text>
-                    <Text style={{fontSize: 13}}>Type: {item.types.name}</Text>
-                    <Text style={{fontSize: 13}}>Category: {item.categories.name}</Text>
+                    <Text style={{fontSize: 13}}>Type: {item.types ? item.types.name : null}</Text>
+                    <Text style={{fontSize: 13}}>Category: {item.categories ? item.categories.name : null}</Text>
                 </Body>
                 <Right>
                     <TouchableOpacity onPress={()=> this.props.navigation.navigate('UpdatePokemon', {item})}>
