@@ -1,9 +1,8 @@
 import React from 'react';
-import {View, Text, StyleSheet, ScrollView, Dimensions} from 'react-native';
-
+import {View, StyleSheet, TouchableOpacity, Dimensions, ScrollView, Text} from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
-const { width, height } = Dimensions.get('window');
+let screen = Dimensions.get('window');
 
 class DetailLocation extends React.Component {
 
@@ -17,6 +16,7 @@ class DetailLocation extends React.Component {
         let latitude = props.navigation.state.params.data.latitude;
         let longitude = props.navigation.state.params.data.longitude;
         this.state = {
+            address: '',
             place : [
                 {
                 name: name,
@@ -31,15 +31,29 @@ class DetailLocation extends React.Component {
         }
     }
 
+    // componentDidMount() {
+    //   axios({
+    //     method: 'get',
+    //     url: `https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyABHR_ELf1vLbg-RD-eDkZH90ruudwPRLE&address=${this.state.latitude},${this.state.longitude}`
+    //   })
+    //   .then(res => {
+    //       this.setState({
+    //         address: res.address
+    //       })
+    //   })
+    //   .catch(err => {
+    //       console.log(err);
+    //   })
+    // }
+
     _mapReady = () => {
         this.state.place[0].mark.showCallout();
     };
-    
 
     render(){
         console.disableYellowBox = true;
         return (
-            <View style={styles.container}>
+        <View style={styles.container}>
             <MapView
               ref={map => this.mapView = map}
               initialRegion={{
@@ -69,7 +83,11 @@ class DetailLocation extends React.Component {
                 />
               ))}
             </MapView>
-          </View>    
+            {/* <View style={styles.place}>
+              <Text style={styles.title}>ADDRESS</Text>
+              <Text style={styles.description}>{this.state.address.error_message ? this.state.address.error_message : this.state.address.results.formatted_address}</Text>
+            </View> */}
+        </View>
         )
     }
 }
@@ -83,7 +101,6 @@ const styles = StyleSheet.create({
       justifyContent: 'flex-end',
       alignItems: 'flex-end'
     },
-  
     mapView: {
       position: 'absolute',
       top: 0,
@@ -91,15 +108,9 @@ const styles = StyleSheet.create({
       bottom: 0,
       right: 0,
     },
-  
-    placesContainer: {
-      width: '100%',
-      maxHeight: 200,
-    },
-  
     place: {
-      width: width - 40,
-      maxHeight: 200,
+      width: screen.width - 40,
+      maxHeight: 300,
       backgroundColor: '#FFF',
       marginHorizontal: 20,
       borderTopLeftRadius: 10,
@@ -112,11 +123,11 @@ const styles = StyleSheet.create({
       fontSize: 18,
       backgroundColor: 'transparent',
     },
-  
     description: {
-      color: '#999',
+      color: 'black',
       fontSize: 12,
       marginTop: 5,
-    },
+    }
+  
   });
   
