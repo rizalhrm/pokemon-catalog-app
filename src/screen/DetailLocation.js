@@ -1,8 +1,8 @@
 import React from 'react';
-import {View, StyleSheet, TouchableOpacity, Dimensions, ScrollView, Text} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Dimensions, ScrollView, Text, Image} from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
-let screen = Dimensions.get('window');
+const screen = Dimensions.get('window');
 
 class DetailLocation extends React.Component {
 
@@ -16,7 +16,7 @@ class DetailLocation extends React.Component {
         let latitude = props.navigation.state.params.data.latitude;
         let longitude = props.navigation.state.params.data.longitude;
         this.state = {
-            address: '',
+            data: {},
             place : [
                 {
                 name: name,
@@ -31,27 +31,31 @@ class DetailLocation extends React.Component {
         }
     }
 
-    // componentDidMount() {
-    //   axios({
-    //     method: 'get',
-    //     url: `https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyABHR_ELf1vLbg-RD-eDkZH90ruudwPRLE&address=${this.state.latitude},${this.state.longitude}`
-    //   })
-    //   .then(res => {
-    //       this.setState({
-    //         address: res.address
-    //       })
-    //   })
-    //   .catch(err => {
-    //       console.log(err);
-    //   })
-    // }
+    componentDidMount() {
+      return fetch(`https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyABHR_ELf1vLbg-RD-eDkZH90ruudwPRLE&address=${this.state.latitude},${this.state.longitude}`)
+      .then((response) => response.json())
+      .then((responseJson) => {
+
+        this.setState({
+          data: responseJson,
+        }, function(){
+
+        });
+
+      })
+      .catch((error) =>{
+        console.error(error);
+      });
+    }
 
     _mapReady = () => {
-        this.state.place[0].mark.showCallout();
+      this.state.place[0].mark.showCallout();
     };
 
     render(){
         console.disableYellowBox = true;
+        console.log(screen.width)
+        console.log(screen.height)
         return (
         <View style={styles.container}>
             <MapView
@@ -80,13 +84,20 @@ class DetailLocation extends React.Component {
                     latitude: place.latitude,
                     longitude: place.longitude,
                   }}
-                />
+                >
+                  <View>
+                    <Image
+                      style={styles.marker}
+                      source={{ uri: this.state.place[0].image }}
+                    />
+                  </View>
+                </MapView.Marker>
               ))}
             </MapView>
-            {/* <View style={styles.place}>
+            <View style={styles.place}>
               <Text style={styles.title}>ADDRESS</Text>
-              <Text style={styles.description}>{this.state.address.error_message ? this.state.address.error_message : this.state.address.results.formatted_address}</Text>
-            </View> */}
+              <Text style={styles.description}>{this.state.data.status == 'OK' ? this.state.data.results[1].formatted_addesss : this.state.data.error_message}</Text>
+            </View>
         </View>
         )
     }
@@ -117,17 +128,20 @@ const styles = StyleSheet.create({
       borderTopRightRadius: 10,
       padding: 20,
     },
-  
+    marker: {
+      width: screen.width - 382,
+      height: screen.height - 642,
+      overflow: 'hidden'
+    },
     title: {
       fontWeight: 'bold',
       fontSize: 18,
       backgroundColor: 'transparent',
     },
     description: {
-      color: 'black',
-      fontSize: 12,
+      backgroundColor: 'transparent',
+      fontSize: 15,
       marginTop: 5,
     }
-  
   });
   

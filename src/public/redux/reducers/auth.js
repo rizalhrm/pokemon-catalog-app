@@ -49,7 +49,7 @@ export default auth = (state = initialState, action) => {
 				isAuth: true
 			});
 	
-			case "LOGIN_PENDING":
+		case "LOGIN_PENDING":
       return Object.assign({}, state, {
         isLoading: true
       });
@@ -72,19 +72,18 @@ export default auth = (state = initialState, action) => {
         isAuth: true
       });
 
-	
 		case "REFRESH_TOKEN_PENDING":
 			return Object.assign({}, state, {
 			  isLoading: true
 			});
 	  
-		  case "REFRESH_TOKEN_REJECTED":
+		case "REFRESH_TOKEN_REJECTED":
 			return Object.assign({}, state, {
 			  isLoading: false,
 			  isAuth: false
 			});
 	  
-		  case "REFRESH_TOKEN_FULFILLED":
+		case "REFRESH_TOKEN_FULFILLED":
 			return Object.assign({}, state, {
 			  access_token: action.payload.data,
 			  isLoading: false,
