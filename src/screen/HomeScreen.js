@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, FlatList, View, TouchableWithoutFeedback, TouchableOpacity, ScrollView, AsyncStorage } from 'react-native';
+import { Image, StyleSheet, FlatList, View, TouchableWithoutFeedback, TouchableOpacity, ScrollView, AsyncStorage, ActivityIndicator } from 'react-native';
 import { Container, Card, Text, Button, Body, Picker, Fab, Footer, Icon} from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
@@ -46,8 +46,20 @@ class HomeScreen extends React.Component {
         await this.props.dispatch(getProfile(token));
     };
     
-    getData = async () => {
-        await this.props.dispatch(allPokemon());
+    getData = (first) => {
+        const { lastPage, page }= this.props.pokemons.pokemons
+        nextPage = page + 1;
+        if(nextPage < lastPage) {
+            this.props.dispatch(allPokemon(nextPage));
+        }
+        
+        else if (nextPage === lastPage) {
+            this.props.dispatch(allPokemon(lastPage));
+        }
+
+        else if (page === first) {
+            this.props.dispatch(allPokemon(first));
+        }
     }
 
     _keyExtractor = (item, index) => item.id.toString();
@@ -66,16 +78,20 @@ class HomeScreen extends React.Component {
 
         </TouchableWithoutFeedback>
     )
+
+    handleLoad = async (page) => {
+        await this.props.dispatch(allPokemon(page));
+    }
     
     render(){
       
         return (
         <View>
             <FlatList
-                data={this.props.pokemons.pokemons}
+                data={this.props.pokemons.pokemons.data}
                 renderItem={this.renderItem}
                 keyExtractor={this._keyExtractor}
-                onRefresh={()=>this.getData(1)}
+                onRefresh={()=>this.handleLoad(1)}
                 refreshing={this.props.pokemons.isLoading}
                 onEndReachedThreshold={0.5}
                 ListFooterComponent={()=>(
